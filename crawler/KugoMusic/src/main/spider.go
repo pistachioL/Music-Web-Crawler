@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/PuerkitoBio/goquery"
 	"github.com/astaxie/beego/logs"
 	"github.com/jaydenwen123/go-util"
 	"github.com/tidwall/gjson"
@@ -14,32 +13,32 @@ import (
 	"time"
 )
 
-func crawlerSongName(html string) {
-	doc, err := goquery.NewDocument(html)
-	if err != nil {
-		fmt.Println(err)
-	}
-
-	doc.Find("a[class=pc_temp_songname]").Each(func(i int, selection *goquery.Selection) {
-		selection.Attr("href")
-		res:= selection.Text()
-		fmt.Println(res)
-	})
-}
-
-func crawlerSongLink(html string) {
-	doc, err := goquery.NewDocument(html)
-	if err != nil {
-		fmt.Println(err)
-	}
-
-	doc.Find("a").Each(func(i int, selection *goquery.Selection) {
-		doc.Find("a[class=pc_temp_songname]").Each(func(i int, selection *goquery.Selection) {
-			href, _ := selection.Attr("href")
-			fmt.Println(href)
-		})
-	})
-}
+//func crawlerSongName(html string) {
+//	doc, err := goquery.NewDocument(html)
+//	if err != nil {
+//		fmt.Println(err)
+//	}
+//
+//	doc.Find("a[class=pc_temp_songname]").Each(func(i int, selection *goquery.Selection) {
+//		selection.Attr("href")
+//		res:= selection.Text()
+//		fmt.Println(res)
+//	})
+//}
+//
+//func crawlerSongLink(html string) {
+//	doc, err := goquery.NewDocument(html)
+//	if err != nil {
+//		fmt.Println(err)
+//	}
+//
+//	doc.Find("a").Each(func(i int, selection *goquery.Selection) {
+//		doc.Find("a[class=pc_temp_songname]").Each(func(i int, selection *goquery.Selection) {
+//			href, _ := selection.Attr("href")
+//			fmt.Println(href)
+//		})
+//	})
+//}
 
 
 //通过get发送请求，返回数据
@@ -200,8 +199,6 @@ func getSongDetails(url string) string {
 func main() {
 	//parseSongJson()
 	getSongDetails("https://wwwapi.kugou.com/yy/index.php?r=play/getdata&callback=jQuery191045751768061608544_1615257951217&dfid=3LjnlA1XAW9s3cB5ld2oVr1V&mid=99467f8a47af4fa16dc26fc68bab9215&platid=4&_=1615257951219")
-
-
 
 
 
