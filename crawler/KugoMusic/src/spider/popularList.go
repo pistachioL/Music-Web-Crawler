@@ -4,12 +4,17 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/astaxie/beego/logs"
+	"github.com/gin-gonic/gin"
 	"github.com/jaydenwen123/go-util"
 	"github.com/tidwall/gjson"
+	"githubLogin/middlewares"
 	"io/ioutil"
 	"net"
 	"net/http"
 	"regexp"
+	"strconv"
+	"strings"
+
 	"time"
 )
 
@@ -136,20 +141,94 @@ func getSongRequestUrls(url string) []string {
 	return sliec
 }
 
+//type Song struct {
+//	Status interface{} `json:"status"`
+//	Errcode interface{} `json:"err_code"`
+//	//Data Data `json:"data"`
+//	Data *json.RawMessage `json:"data"`
+//}
+//
+//type Data struct {
+//	AudioName string `json:"audio_name"`
+//	AlbumName string `json:"album_name"`
+//	Image string `json:"img"`
+//	SongName string `json:"song_name"`
+//	AuthorName string `json:"author_name"`
+//	Lyrics string `json:"lyrics"`
+//	PlayUrl string `json:"play_url"`
+//}
+
 type Song struct {
-	Status interface{} `json:"status"`
-	Errcode interface{} `json:"err_code"`
-	//	Data interface{} `json:"data"`
+	Status int `json:"status"`
+	ErrCode int `json:"err_code"`
 	Data Data `json:"data"`
 }
+type Authors struct {
+	AuthorID string `json:"author_id"`
+	AuthorName string `json:"author_name"`
+	IsPublish string `json:"is_publish"`
+	SizableAvatar string `json:"sizable_avatar"`
+	Avatar string `json:"avatar"`
+}
 type Data struct {
+	Hash string `json:"hash"`
+	Timelength int `json:"timelength"`
+	Filesize int `json:"filesize"`
 	AudioName string `json:"audio_name"`
+	HaveAlbum int `json:"have_album"`
 	AlbumName string `json:"album_name"`
+	AlbumID string `json:"album_id"`
+	Img string `json:"img"`
+	HaveMv int `json:"have_mv"`
+	VideoID string `json:"video_id"`
+	AuthorName string `json:"author_name"`
+	SongName string `json:"song_name"`
+	Lyrics string `json:"lyrics"`
+	AuthorID string `json:"author_id"`
+	Privilege int `json:"privilege"`
+	Privilege2 string `json:"privilege2"`
+	PlayURL string `json:"play_url"`
+	Authors []Authors `json:"authors"`
+	IsFreePart int `json:"is_free_part"`
+	Bitrate int `json:"bitrate"`
+	RecommendAlbumID string `json:"recommend_album_id"`
+	AudioID string `json:"audio_id"`
+	HasPrivilege bool `json:"has_privilege"`
+	PlayBackupURL string `json:"play_backup_url"`
 }
 
-func getSongDetails(url string) (string,error) {
+func unicode2utf8(source string) string {
+	var res = []string{""}
+	sUnicode := strings.Split(source, "\\u")
+	var context = ""
+	for _, v := range sUnicode {
+		var additional = ""
+		if len(v) < 1 {
+			continue
+		}
+		if len(v) > 4 {
+			rs := []rune(v)
+			v = string(rs[:4])
+			additional = string(rs[4:])
+		}
+		temp, err := strconv.ParseInt(v, 16, 32)
+		if err != nil {
+			context += v
+		}
+		context += fmt.Sprintf("%c", temp)
+		context += additional
+	}
+	res = append(res, context)
+	return strings.Join(res, "")
+}
+
+func getSongDetails(url string) ([]Song,error) {
 	urls := getSongRequestUrls(url)
-	var jsonStr string = ""
+	s := make([]Song, 0)
+//	song := Song{}
+	var song Song
+//	var data Data
+//	var song json.RawMessage
 	for i := range urls {
 		resp, err := http.Get(urls[i])
 		if err != nil {
@@ -160,69 +239,43 @@ func getSongDetails(url string) (string,error) {
 		if err != nil {
 			fmt.Print("获取请求体失败:", err)
 		}
-
 		str := string(body)
-
 		//	rex := regexp.MustCompile(`\(([^)]+)\)`) //匹配json
 		rex := regexp.MustCompile(`\((.*)\)`) //匹配json
 		out := rex.FindAllStringSubmatch(str, -1)
 
+		//fmt.Println(out[0][1]) //去掉括号
+
+
 		for _, i := range out {
 			jsonData := []byte(i[1])
-			song := Song{}
-			err := json.Unmarshal(jsonData, &song)
+			//fmt.Print(unicode2utf8(string(jsonData)))
+			err := json.Unmarshal(jsonData, &song) //反序列化为结构体
 			if err != nil {
 				fmt.Println("json解析失败：",err)
 			}
-			fmt.Println(song.Data.AlbumName)
+			s = append(s, song) //把每个song存入map中
 		}
 	}
 
-	return jsonStr, nil
-}
-
-
-
-
-//func parseSongJson() {
-//	data := getSongDetails("https://wwwapi.kugou.com/yy/index.php?r=play/getdata&callback=jQuery191045751768061608544_1615257951217&dfid=3LjnlA1XAW9s3cB5ld2oVr1V&mid=99467f8a47af4fa16dc26fc68bab9215&platid=4&_=1615257951219")
-//
-//	str := []byte(data)
-//	song := Song{}
-//	err := json.Unmarshal(str, &song)
-//	if err != nil {
-//		fmt.Println("json解析失败：",err)
-//	}
-//	fmt.Print(song.Data.AlbumName)
-//}
-
-func handleSongData(w http.ResponseWriter, r *http.Request) {
-	fmt.Print("111")
-	//if r.Method == "POST" {
-	//	songDetails, err:= getSongDetails("https://wwwapi.kugou.com/yy/index.php?r=play/getdata&callback=jQuery191045751768061608544_1615257951217&dfid=3LjnlA1XAW9s3cB5ld2oVr1V&mid=99467f8a47af4fa16dc26fc68bab9215&platid=4&_=1615257951219")
-	//	if err != nil {
-	//		fmt.Println("获取歌曲详情信息错误getSongDetails()",err)
-	//	}
-		//fmt.Print(songDetails)
-	//	w.Header().Set("Content-Type","application/json")
-	//}
+	return s, nil
 
 }
 
-func main() {
-	http.HandleFunc("/popularList", handleSongData)
-	if err := http.ListenAndServe(":9091", nil); err != nil {
-		fmt.Println("监听端口失败，错误信息为：",err)
-		return
-	}
-	songDetails,err :=	getSongDetails("https://wwwapi.kugou.com/yy/index.php?r=play/getdata&callback=jQuery191045751768061608544_1615257951217&dfid=3LjnlA1XAW9s3cB5ld2oVr1V&mid=99467f8a47af4fa16dc26fc68bab9215&platid=4&_=1615257951219")
+func handleSongData(context *gin.Context) {
+	songDetails, err:= getSongDetails("https://wwwapi.kugou.com/yy/index.php?r=play/getdata&callback=jQuery191045751768061608544_1615257951217&dfid=3LjnlA1XAW9s3cB5ld2oVr1V&mid=99467f8a47af4fa16dc26fc68bab9215&platid=4&_=1615257951219")
 	if err != nil {
 		fmt.Println("获取歌曲详情信息错误getSongDetails()",err)
 	}
-	fmt.Println(songDetails)
+	context.JSON(http.StatusOK, songDetails) //返回给前端
+}
 
+func main() {
+	engine := gin.Default()
+	engine.Use(middlewares.Cors())
+	engine.Any("/popularList", handleSongData)
+	engine.Run(":9091")
 	//parseSongJson()
 	//	crawlerSongName("https://www.kugou.com/yy/html/rank.html")
 	//	ParseBoardSongsInfo("https://www.kugou.com/yy/html/rank.html")
-
 }
