@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+
 )
 
 type Conf struct {
@@ -12,7 +13,7 @@ type Conf struct {
 	RedirectUrl 	string
 }
 
-var conf = Conf {
+var conf = Conf{
 	ClientId: "cecc9bc83bd8cff1bfb0",
 	ClientSecret: "915a9f1814c3c082f23043a19e9b456adc95ece5",
 	RedirectUrl: "http://localhost:8080/oauth/redirect",
@@ -126,12 +127,12 @@ func getUserInfo(token *Token) (map[string]interface{}, error) {
 	return userInfo, nil
 }
 
-func main() {
-	http.HandleFunc("/oauth/redirect", githubLogin.Oauth())
-	if err := http.ListenAndServe(":9090", nil); err != nil {
-		fmt.Println("监听失败，错误信息为:", err)  // log.Fatal("ListenAndServe: ", err)
-		return
-	}
-}
+//func main() {
+//	http.HandleFunc("/oauth/redirect", Oauth)
+//	if err := http.ListenAndServe(":9090", nil); err != nil {
+//		fmt.Println("监听失败，错误信息为:", err)  // log.Fatal("ListenAndServe: ", err)
+//		return
+//	}
+//}
 
 
