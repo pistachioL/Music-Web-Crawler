@@ -1,4 +1,4 @@
-package main
+package kugoMusic
 
 import (
 	"encoding/json"
@@ -7,7 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/jaydenwen123/go-util"
 	"github.com/tidwall/gjson"
-	"githubLogin/middlewares"
+	"Middlewares"
 	"io/ioutil"
 	"net"
 	"net/http"
@@ -262,7 +262,7 @@ func getSongDetails(url string) ([]Song,error) {
 
 }
 
-func handleSongData(context *gin.Context) {
+func HandleSongData(context *gin.Context) {
 	songDetails, err:= getSongDetails("https://wwwapi.kugou.com/yy/index.php?r=play/getdata&callback=jQuery191045751768061608544_1615257951217&dfid=3LjnlA1XAW9s3cB5ld2oVr1V&mid=99467f8a47af4fa16dc26fc68bab9215&platid=4&_=1615257951219")
 	if err != nil {
 		fmt.Println("获取歌曲详情信息错误getSongDetails()",err)
@@ -273,8 +273,9 @@ func handleSongData(context *gin.Context) {
 func main() {
 	engine := gin.Default()
 	engine.Use(middlewares.Cors())
-	engine.Any("/popularList", handleSongData)
+	engine.Any("/popularList", HandleSongData)
 	engine.Run(":9091")
+
 	//parseSongJson()
 	//	crawlerSongName("https://www.kugou.com/yy/html/rank.html")
 	//	ParseBoardSongsInfo("https://www.kugou.com/yy/html/rank.html")
