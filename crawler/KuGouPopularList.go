@@ -183,16 +183,16 @@ type Data struct {
 	SongName string `json:"song_name"`
 	Lyrics string `json:"lyrics"`
 	AuthorID string `json:"author_id"`
-	Privilege int `json:"privilege"`
-	Privilege2 string `json:"privilege2"`
-	PlayURL string `json:"play_url"`
-	Authors []Authors `json:"authors"`
-	IsFreePart int `json:"is_free_part"`
-	Bitrate int `json:"bitrate"`
+	Privilege int           `json:"privilege"`
+	Privilege2 string       `json:"privilege2"`
+	PlayURL string          `json:"play_url"`
+	Authors []Authors       `json:"authors"`
+	IsFreePart int          `json:"is_free_part"`
+	Bitrate int             `json:"bitrate"`
 	RecommendAlbumID string `json:"recommend_album_id"`
-	AudioID string `json:"audio_id"`
-	HasPrivilege bool `json:"has_privilege"`
-	PlayBackupURL string `json:"play_backup_url"`
+	AudioID string          `json:"audio_id"`
+	HasPrivilege bool       `json:"has_privilege"`
+	PlayBackupURL string    `json:"play_backup_url"`
 }
 
 func unicode2utf8(source string) string {
