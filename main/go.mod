@@ -12,6 +12,9 @@ require Middlewares v0.0.0
 
 replace Middlewares => ../middlewares
 
-require Crawler v0.0.0
+require (
+	Crawler v0.0.0
+	github.com/gogf/gf v1.15.6
+)
 
 replace Crawler => ../crawler/kugoMusic
