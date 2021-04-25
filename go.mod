@@ -5,10 +5,12 @@ go 1.15
 require (
 	github.com/astaxie/beego v1.12.3
 	github.com/gin-gonic/gin v1.6.3
+	github.com/go-ini/ini v1.62.0
 	github.com/go-playground/validator/v10 v10.4.1 // indirect
+	github.com/go-sql-driver/mysql v1.6.0
 	github.com/golang/protobuf v1.4.3 // indirect
 	github.com/jaydenwen123/go-util v0.0.0-20210115085038-29ef5f0298c0
-	github.com/jinzhu/gorm v1.9.16 // indirect
+	github.com/jinzhu/gorm v1.9.16
 	//github.com/json-iterator/go v1.1.10 // indirect
 	github.com/leodido/go-urn v1.2.1 // indirect
 	github.com/tidwall/gjson v1.6.8
@@ -19,5 +21,7 @@ require (
 	golang.org/x/net v0.0.0-20200421231249-e086a090c8fd // indirect
 	golang.org/x/sys v0.0.0-20210113181707-4bcb84eeeb78 // indirect
 	google.golang.org/protobuf v1.25.0 // indirect
+	gopkg.in/ini.v1 v1.62.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
+	gorm.io/gorm v1.21.8 // indirect
 )
