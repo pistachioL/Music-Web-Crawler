@@ -6,6 +6,7 @@ import (
 	"githubLogin/login"
 	"githubLogin/middlewares"
 	"githubLogin/search"
+	"githubLogin/userhome"
 )
 
 func start() {
@@ -18,6 +19,7 @@ func main() {
 	engine.Any("/register", login.Register)
 	engine.Any("/login", login.Login)
 	engine.Any("/oauth/redirect", login.Oauth)
+	engine.Any("/editProfile", userhome.UpdateProfile)
 	engine.Any("/popularList", crawler.HandleSongData)
 	engine.Any("/search", search.HandleSearch)
 	_ = engine.Run(":9091")

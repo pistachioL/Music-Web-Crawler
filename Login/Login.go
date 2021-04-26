@@ -16,7 +16,6 @@ type User struct {
 	Gender   string		`json:"gender"`
 	Avatar 	 string		`json:"avatar"`
 	Desc 	 string		`json:"desc"`
-
 }
 var UserInfo []User
 var Response = make(map[string]interface{})
@@ -29,7 +28,7 @@ func conn() *gorm.DB{
 	//}
 	//gorm.Open("mysql", "conf/")
 	//fmt.Print(cfg.Section("mysql").GetKey("User"))
-	db,err := gorm.Open("mysql","root:password@tcp(localhost)/music?charset=utf8&parseTime=True&loc=Local")
+	db,err := gorm.Open("mysql","root:971113Cg@@tcp(localhost)/music?charset=utf8&parseTime=True&loc=Local")
 	if err != nil{
 		fmt.Print("connect databases fail", err)
 	}
