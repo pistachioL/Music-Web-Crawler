@@ -20,6 +20,7 @@ func main() {
 	engine.Any("/login", login.Login)
 	engine.Any("/oauth/redirect", login.Oauth)
 	engine.Any("/editProfile", userhome.UpdateProfile)
+	engine.Any("/readProfile", userhome.ReadProfile)
 	engine.Any("/popularList", crawler.HandleSongData)
 	engine.Any("/search", search.HandleSearch)
 	_ = engine.Run(":9091")
