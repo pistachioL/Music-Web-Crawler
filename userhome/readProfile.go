@@ -9,6 +9,7 @@ func ReadProfile(c *gin.Context) {
 
 	var user User
 	db := conn()
+	defer db.Close()
 	var currentUser = c.Query("user")
 	db.Table("user").Where("username = ?", currentUser).Find(&user)
 	if user.Username != "" {

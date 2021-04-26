@@ -81,6 +81,4 @@ func UpdateProfile(c *gin.Context) {
 		c.JSON(http.StatusOK, Response)
 		return
 	}
-
-
 }
