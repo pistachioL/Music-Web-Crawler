@@ -160,6 +160,7 @@ type Song struct {
 	Status int `json:"status"`
 	ErrCode int `json:"err_code"`
 	Data Data `json:"data"`
+	Like bool `json:"like"`
 }
 type Authors struct {
 	AuthorID string `json:"author_id"`
