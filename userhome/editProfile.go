@@ -17,6 +17,7 @@ type User struct {
 	Avatar 	 string		`json:"avatar"`
 	Desc 	 string		`json:"desc"`
 }
+
 var Response = make(map[string]interface{})
 func conn() *gorm.DB{
 	db,err := gorm.Open("mysql","root:971113Cg@@tcp(localhost)/music?charset=utf8&parseTime=True&loc=Local")
@@ -37,7 +38,6 @@ func UpdateProfile(c *gin.Context) {
 	desc := c.Request.FormValue("desc")
 
 	db.Table("user").Where("username = ?", currentUser).Find(&user)
-
 	if user.Username != "" { //有这个用户
 		Response["code"] = ""
 		Response["msg"] = ""

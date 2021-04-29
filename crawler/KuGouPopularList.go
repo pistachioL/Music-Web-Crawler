@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/astaxie/beego/logs"
 	"github.com/gin-gonic/gin"
+	_ "github.com/go-redis/redis/v8"
 	"github.com/jaydenwen123/go-util"
 	"github.com/tidwall/gjson"
 	"io/ioutil"
@@ -15,33 +16,6 @@ import (
 	"strings"
 	"time"
 )
-
-//func crawlerSongName(html string) {
-//	doc, err := goquery.NewDocument(html)
-//	if err != nil {
-//		fmt.Println(err)
-//	}
-//
-//	doc.Find("a[class=pc_temp_songname]").Each(func(i int, selection *goquery.Selection) {
-//		selection.Attr("href")
-//		res:= selection.Text()
-//		fmt.Println(res)
-//	})
-//}
-//
-//func crawlerSongLink(html string) {
-//	doc, err := goquery.NewDocument(html)
-//	if err != nil {
-//		fmt.Println(err)
-//	}
-//
-//	doc.Find("a").Each(func(i int, selection *goquery.Selection) {
-//		doc.Find("a[class=pc_temp_songname]").Each(func(i int, selection *goquery.Selection) {
-//			href, _ := selection.Attr("href")
-//			fmt.Println(href)
-//		})
-//	})
-//}
 
 
 //通过get发送请求，返回数据
@@ -138,23 +112,6 @@ func getSongRequestUrls(url string) []string {
 
 	return sliec
 }
-
-//type NetEaseCloudMusicSong struct {
-//	Status interface{} `json:"status"`
-//	Errcode interface{} `json:"err_code"`
-//	//Data Data `json:"data"`
-//	Data *json.RawMessage `json:"data"`
-//}
-//
-//type Data struct {
-//	AudioName string `json:"audio_name"`
-//	AlbumName string `json:"album_name"`
-//	Image string `json:"img"`
-//	SongName string `json:"song_name"`
-//	AuthorName string `json:"author_name"`
-//	Lyrics string `json:"lyrics"`
-//	PlayUrl string `json:"play_url"`
-//}
 
 type Song struct {
 	Status int `json:"status"`

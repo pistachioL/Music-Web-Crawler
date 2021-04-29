@@ -21,7 +21,7 @@ import (
 //
 //}
 
-func getSongInfo(index int) error {
+func GetSongInfo(index int) error {
 	musicInfoUrl := "http://player.kuwo.cn/webmusic/st/getNewMuiseByRid?rid=MUSIC_" + strconv.Itoa(index)
 	log.Println("musicInfoUrl:", musicInfoUrl)
 	res, err := http.Get(musicInfoUrl)
@@ -158,7 +158,7 @@ func insertIntoDb(song *NetEaseCloudMusicSong, requestMp3Url, requestAacUrl, mp3
 }
 
 //爬取歌曲信息，插入数据库
-func crawlerSongInfo() {
+func CrawlerSongInfo() {
 	/**
 	1、遍历所有的ID,拼接http://player.kuwo.cn/webmusic/st/getNewMuiseByRid?rid=MUSIC_ID
 	2、向每个URL发送请求，解析，如果<NetEaseCloudMusicSong></NetEaseCloudMusicSong>不为空的话，将歌曲信息入库
@@ -170,7 +170,7 @@ func crawlerSongInfo() {
 	**/
 
 	for i := 2750596; i <= 9999999; i++ {
-		go getSongInfo(i)
+		go GetSongInfo(i)
 		time.Sleep(time.Millisecond * 1)
 
 	}
