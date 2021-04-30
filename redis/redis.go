@@ -7,6 +7,7 @@ import (
 	"github.com/go-redis/redis"
 	"log"
 	"net/http"
+	"time"
 )
 
 func Conn() *redis.Client{
@@ -24,6 +25,7 @@ func Conn() *redis.Client{
 	fmt.Println("redis ping success:", pong)
 	return client
 }
+
 type RecentSong struct {
 	title 	string	`json:"title"`
 	author 	string	`json:"author"`
@@ -43,32 +45,17 @@ func (m *RecentSong) MarshalBinary() ([]byte, error) {
 	@return 返回最近播放的歌曲
  */
 func SetRecentPlay(c *gin.Context) { //json->map->key
-	//songList = append(songList, recentSongList)
 	client := Conn()
 	key := c.Query("user") //用户名作为key
 	recentSongList := c.Query("play") //歌曲json
-	//b, err := json.Marshal(recentSongList)
 	var recentSong RecentSong
 	recentSong.MarshalBinary()
-
-	//var songList map[string]interface{}
-	//json.Unmarshal([]byte(recentSongList), &songList)
-	//songName := songList["title"].(string) //根据歌名作为key
-
+	setExpire(key)
 	setList, err := client.SAdd(key, recentSongList).Result()
 	if err != nil {
-		log.Println("SADD failed:", err)
+		log.Println("SAdd failed:", err)
 		return
 	}
-
-
-
-
-
-	//fmt.Println("songList:", songList)
-
-	//res := client.RPush(key, recentSongList, 3*time.Hour)
-	//fmt.Println("recentSongList：", recentSongList)
 	c.JSON(http.StatusOK, setList)
 }
 
@@ -76,9 +63,18 @@ func SetRecentPlay(c *gin.Context) { //json->map->key
 func GetRecentPlay(c *gin.Context) {
 	client := Conn()
 	key := c.Query("user") //用户名作为key
-	songRes, _ :=  client.SMembers(key).Result()
-	fmt.Println("songResList:",songRes)
+	songRes, _ :=  client.SMembers(key).Result() //["{}", "{}"]
 	c.JSON(http.StatusOK, songRes)
+}
+
+func setExpire(key string) bool{
+	client := Conn()
+	res, err := client.Expire(key, 720*time.Hour).Result()
+	if err != nil {
+		fmt.Println("过期时间设置错误：",err)
+	}
+	fmt.Print("设置为期一个月的过期时间：",res)
+	return res
 }
 
 

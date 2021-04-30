@@ -36,13 +36,13 @@ type DetailReq struct {
 	ErrCode int `json:"err_code"`
 	Data Data `json:"data"`
 }
-type Authors struct {
-	AuthorID string `json:"author_id"`
-	AuthorName string `json:"author_name"`
-	IsPublish string `json:"is_publish"`
-	SizableAvatar string `json:"sizable_avatar"`
-	Avatar string `json:"avatar"`
-}
+//type Authors struct {
+//	AuthorID string `json:"author_id"`
+//	AuthorName string `json:"author_name"`
+//	IsPublish string `json:"is_publish"`
+//	SizableAvatar string `json:"sizable_avatar"`
+//	Avatar string `json:"avatar"`
+//}
 type Data struct {
 	Hash string `json:"hash"`
 	Timelength int `json:"timelength"`
@@ -61,7 +61,7 @@ type Data struct {
 	Privilege int `json:"privilege"`
 	Privilege2 string `json:"privilege2"`
 	PlayURL string `json:"play_url"`
-	Authors []Authors `json:"authors"`
+	//Authors []Authors `json:"authors"`
 	IsFreePart int `json:"is_free_part"`
 	Bitrate int `json:"bitrate"`
 	RecommendAlbumID string `json:"recommend_album_id"`
@@ -162,7 +162,8 @@ func getSearchDetails(c *gin.Context) []DetailReq{
 		json.Unmarshal(body, &searchRes)
 		searchSongs = append(searchSongs, searchRes) //把每个song存入map中
 	}
-
+	saveSearchRes(searchSongs)
+	getSearchResult()
 	return searchSongs
 }
 

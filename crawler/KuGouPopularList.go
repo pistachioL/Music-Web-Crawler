@@ -109,7 +109,6 @@ func getSongRequestUrls(url string) []string {
 		req.URL.RawQuery = q.Encode()
 		sliec[v] = req.URL.String()
 	}
-
 	return sliec
 }
 

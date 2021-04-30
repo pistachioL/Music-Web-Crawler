@@ -14,14 +14,8 @@ import (
 	"strings"
 	"time"
 )
-//
-//func main() {
-//	crawlerSongInfo()
-//	//downloadMusic()
-//
-//}
 
-func GetSongInfo(index int) error {
+func getSongInfo(index int) error {
 	musicInfoUrl := "http://player.kuwo.cn/webmusic/st/getNewMuiseByRid?rid=MUSIC_" + strconv.Itoa(index)
 	log.Println("musicInfoUrl:", musicInfoUrl)
 	res, err := http.Get(musicInfoUrl)
@@ -170,7 +164,7 @@ func CrawlerSongInfo() {
 	**/
 
 	for i := 2750596; i <= 9999999; i++ {
-		go GetSongInfo(i)
+		go getSongInfo(i)
 		time.Sleep(time.Millisecond * 1)
 
 	}
