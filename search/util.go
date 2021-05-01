@@ -3,8 +3,8 @@ package search
 import (
 	"context"
 	"fmt"
+	"githubLogin/model"
 	"gopkg.in/olivere/elastic.v5"
-	"reflect"
 	"strconv"
 )
 
@@ -24,7 +24,7 @@ func connES() *elastic.Client{
 	return client
 }
 
-func saveSearchRes(searchResArr []DetailReq) {
+func saveSearchRes(searchResArr []model.DetailReq) {
 	client := connES()
 	n := 0
 	bulkRequest := client.Bulk()
@@ -42,30 +42,60 @@ func saveSearchRes(searchResArr []DetailReq) {
 }
 
 //存储关键词 统计搜索次数
-func saveSearchKey(key string) {
+func saveSearchKey(keyword string) {
+	client := connES()
+	mapping := `{
+    "settings":{
+        "number_of_shards":1,
+        "number_of_replicas":0
+    },
+    "mappings":{
+        "properties":{
+            "tags":{
+                "type":"keyword"
+            },
+            "location":{
+                "type":"geo_point"
+            },
+            "suggest_field":{
+                "type":"completion"
+            }
+        }
+    }
+}`
+
+
+	createIndex, _ := client.CreateIndex("keyword").BodyString(mapping).Do(context.Background())
+	fmt.Println(createIndex.Index)
+
 
 }
 
-func getSearchResult() {
+//根据关键词从es中查询结果
+func getSearchResult(keyword string) {
 	client := connES()
-	searchRes,err := client.Search("search").Type("search").Do(context.Background())
+	searchRes,err := client.Get().Index("search").Type("search").Id(keyword).Do(context.Background())
 	if err != nil {
 		fmt.Println("ES获取搜索数据失败：", err)
 	}
-	fmt.Println("搜索结果：")
-	printRes(searchRes, err)
+	fmt.Println("搜索结果：", searchRes)
+}
+
+func searchSuggest() {
+
 }
 
 
-//打印查询到结果
-func printRes(res *elastic.SearchResult, err error) {
-	if err != nil {
-		print(err.Error())
-		return
-	}
-	var typ DetailReq
-	for _, item := range res.Each(reflect.TypeOf(typ)) { //从搜索结果中取数据的方法
-		t := item.(DetailReq)
-		fmt.Printf("%#v\n", t)
-	}
-}
+//func getAllRes(res *elastic.SearchResult, err error) {
+//	if err != nil {
+//		print(err.Error())
+//		return
+//	}
+//	var typ DetailReq
+//	for _, item := range res.Each(reflect.TypeOf(typ)) { //从搜索结果中取数据的方法
+//		t := item.(DetailReq)
+//		fmt.Printf("%#v\n", t)
+//	}
+//}
+//
+

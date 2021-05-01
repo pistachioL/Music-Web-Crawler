@@ -1,37 +1,22 @@
 package userhome
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
-	"github.com/jinzhu/gorm"
+
+	"githubLogin/model"
 	"net/http"
 )
 
-type User struct {
-	Id		 int        `json:"id" `
-	Username string	    `json:"username" db:"username"`
-	Password string		`json:"password" db:password`
-	Email    string		`json:"email" db:email`
-	Gender   string		`json:"gender"`
-	Avatar 	 string		`json:"avatar"`
-	Desc 	 string		`json:"desc"`
-}
+
 
 var Response = make(map[string]interface{})
-func conn() *gorm.DB{
-	db,err := gorm.Open("mysql","root:971113Cg@@tcp(localhost)/music?charset=utf8&parseTime=True&loc=Local")
-	if err != nil{
-		fmt.Print("connect databases fail", err)
-	}
-	fmt.Print("connect database success")
-	return db
-}
+
 
 func UpdateProfile(c *gin.Context) {
-	db := conn()
+	db := model.Conn()
 	defer db.Close()
-	var user User
+	var user model.User
 	var currentUser = c.Query("user")
 	name := c.Request.FormValue("username")
 	gender := c.Request.FormValue("gender")

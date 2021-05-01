@@ -1,40 +1,15 @@
 package login
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
-	"github.com/jinzhu/gorm"
+	"githubLogin/model"
 	"net/http"
 )
 
-type User struct {
-	Id		 int        `json:"id" `
-	Username string	    `json:"username" db:"username"`
-	Password string		`json:"password" db:password`
-	Email    string		`json:"email" db:email`
-	Gender   string		`json:"gender"`
-	Avatar 	 string		`json:"avatar"`
-	Desc 	 string		`json:"desc"`
-}
-var UserInfo []User
-var Response = make(map[string]interface{})
 
-func conn() *gorm.DB{
-	//cfg, err := ini.Load("conf/my.ini")
-	//if err != nil {
-	//	fmt.Printf("Fail to read configure file: %v", err)
-	//	os.Exit(1)
-	//}
-	//gorm.Open("mysql", "conf/")
-	//fmt.Print(cfg.Section("mysql").GetKey("User"))
-	db,err := gorm.Open("mysql","root:971113Cg@@tcp(localhost)/music?charset=utf8&parseTime=True&loc=Local")
-	if err != nil{
-		fmt.Print("connect databases fail", err)
-	}
-	fmt.Print("connect database success")
-	return db
-}
+var UserInfo []model.User
+var Response = make(map[string]interface{})
 
 
 //注册
@@ -49,8 +24,8 @@ func Register(c *gin.Context) {
 		c.JSON(http.StatusOK, Response)
 		return
 	}
-	db := conn()
-	var user User
+	db := model.Conn()
+	var user model.User
 	db.Table("user").Select("email").Where("email = ?", email).Scan(&user)
 
 	if user.Email != "" {
@@ -73,8 +48,8 @@ func Login(c *gin.Context) {
 		c.JSON(http.StatusOK, Response)
 		return
 	}
-	db := conn()
-	var user User
+	db := model.Conn()
+	var user model.User
 	db.Table("user").Where("username = ?", name).Find(&user)
 	if user.Email != "" {
 		if user.Password == pwd {
@@ -93,8 +68,8 @@ func Login(c *gin.Context) {
 
 
 func AddUser(name string, pwd string, email string) {
-	db := conn()
-	newUser := &User{Username: name, Password: pwd, Email: email} // 根据指针找到数据表
+	db := model.Conn()
+	newUser := &model.User{Username: name, Password: pwd, Email: email} // 根据指针找到数据表
 	db.SingularTable(true)
 	db.Create(newUser)
 }

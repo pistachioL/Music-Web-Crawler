@@ -2,13 +2,14 @@ package userhome
 
 import (
 	"github.com/gin-gonic/gin"
+	"githubLogin/model"
 	"net/http"
 )
 var readResponse = make(map[string]interface{})
 func ReadProfile(c *gin.Context) {
 
-	var user User
-	db := conn()
+	var user model.User
+	db := model.Conn()
 	defer db.Close()
 	var currentUser = c.Query("user")
 	db.Table("user").Where("username = ?", currentUser).Find(&user)

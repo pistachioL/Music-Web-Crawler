@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"encoding/xml"
 	"errors"
+	_ "github.com/go-sql-driver/mysql"
 	"io"
 	"io/ioutil"
 	"log"
@@ -15,7 +16,13 @@ import (
 	"time"
 )
 
-func getSongInfo(index int) error {
+func main() {
+	//crawlerSongInfo()
+	downloadMusic()
+
+}
+
+func GetSongInfo(index int) error {
 	musicInfoUrl := "http://player.kuwo.cn/webmusic/st/getNewMuiseByRid?rid=MUSIC_" + strconv.Itoa(index)
 	log.Println("musicInfoUrl:", musicInfoUrl)
 	res, err := http.Get(musicInfoUrl)
@@ -23,7 +30,7 @@ func getSongInfo(index int) error {
 		log.Println(err.Error())
 		return err
 	}
-	var song NetEaseCloudMusicSong
+	var song Song1
 	var responseBytes []byte
 	responseBytes, _ = ioutil.ReadAll(res.Body)
 	defer res.Body.Close()
@@ -67,19 +74,19 @@ func getSongInfo(index int) error {
 			if song.Artist_url != "" { //去掉前缀
 				song.Artist_url = song.Artist_url[21:len(song.Artist_url)]
 			}
-			//
-			//err = insertIntoDb(&song, requestMp3Url, requestAacUrl, mp3Url, aacUrl)
-			//if err != nil {
-			//	log.Println(err.Error())
-			//}
+
+			err = insertIntoDb(&song, requestMp3Url, requestAacUrl, mp3Url, aacUrl)
+			if err != nil {
+				log.Println(err.Error())
+			}
 		}
 	}
 
 	return nil
 }
 
-type NetEaseCloudMusicSong struct {
-	XMLName       xml.Name `xml:"NetEaseCloudMusicSong"`
+type Song1 struct {
+	XMLName       xml.Name `xml:"Song"`
 	Music_id      string   `xml:"music_id"`
 	Mv_rid        string   `xml:"mv_rid"`
 	Name          string   `xml:"name"`
@@ -120,7 +127,7 @@ func init() {
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 	log.SetOutput(os.Stdout)
 }
-func insertIntoDb(song *NetEaseCloudMusicSong, requestMp3Url, requestAacUrl, mp3Url, aacUrl string) error {
+func insertIntoDb(song *Song1, requestMp3Url, requestAacUrl, mp3Url, aacUrl string) error {
 	if db != nil && song != nil {
 		stmt, err := db.Prepare("insert into songinfo(music_id,mv_rid,name,song_url,artist,artid,singer,special,ridmd591,mp3size,artist_url,auther_url,playid,artist_pic,artist_pic240,path,mp3path,aacpath,wmadl,mp3dl,aacdl,lyric,lyric_zz,request_mp3_url,request_aac_url,song_mp3_url,song_aac_url)values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)")
 		if err != nil {
@@ -155,7 +162,7 @@ func insertIntoDb(song *NetEaseCloudMusicSong, requestMp3Url, requestAacUrl, mp3
 func CrawlerSongInfo() {
 	/**
 	1、遍历所有的ID,拼接http://player.kuwo.cn/webmusic/st/getNewMuiseByRid?rid=MUSIC_ID
-	2、向每个URL发送请求，解析，如果<NetEaseCloudMusicSong></NetEaseCloudMusicSong>不为空的话，将歌曲信息入库
+	2、向每个URL发送请求，解析，如果<Song></Song>不为空的话，将歌曲信息入库
 	3、通过1和2应该可以拿到所有的音乐信息；拿个每一项歌曲信息后，拼接http://antiserver.kuwo.cn/anti.s?rid=MUSIC_ID&format=aac|mp3&type=convert_url&response=url
 	4、向3中的连接发请求，拿到AAC和mp3的歌曲地址
 	5、从100000开始到9999999。每条请求用一个协成完成
@@ -164,7 +171,7 @@ func CrawlerSongInfo() {
 	**/
 
 	for i := 2750596; i <= 9999999; i++ {
-		go getSongInfo(i)
+		go GetSongInfo(i)
 		time.Sleep(time.Millisecond * 1)
 
 	}
@@ -179,9 +186,9 @@ func downloadMusic() error {
 		return err
 	}
 	defer rows.Close()
-	var songList []*NetEaseCloudMusicSong
+	var songList []*Song1
 	for rows.Next() {
-		song := new(NetEaseCloudMusicSong)
+		song := new(Song1)
 		var songId int
 		var mp3Url, aacUrl string
 		err = rows.Scan(&songId, &song.Music_id, &song.Mv_rid, &song.Name, &song.Song_url, &song.Artist, &song.Artid, &song.Singer, &song.Special, &song.Ridmd591, &song.Mp3size, &song.Artist_url, &song.Auther_url, &song.Playid, &song.Artist_pic, &song.Artist_pic240, &song.Path, &song.Mp3path, &song.Aacpath, &song.Wmadl, &song.Mp3dl, &song.Aacdl, &song.Lyric, &song.Lyric_zz, &song.RequestMp3Url, &song.ReqeustAacUrl, &mp3Url, &aacUrl)

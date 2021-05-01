@@ -15,6 +15,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	"githubLogin/model"
 )
 
 
@@ -112,45 +113,6 @@ func getSongRequestUrls(url string) []string {
 	return sliec
 }
 
-type Song struct {
-	Status int `json:"status"`
-	ErrCode int `json:"err_code"`
-	Data Data `json:"data"`
-	Like bool `json:"like"`
-}
-type Authors struct {
-	AuthorID string `json:"author_id"`
-	AuthorName string `json:"author_name"`
-	IsPublish string `json:"is_publish"`
-	SizableAvatar string `json:"sizable_avatar"`
-	Avatar string `json:"avatar"`
-}
-type Data struct {
-	Hash string `json:"hash"`
-	Timelength int `json:"timelength"`
-	Filesize int `json:"filesize"`
-	AudioName string `json:"audio_name"`
-	HaveAlbum int `json:"have_album"`
-	AlbumName string `json:"album_name"`
-	AlbumID string `json:"album_id"`
-	Img string `json:"img"`
-	HaveMv int `json:"have_mv"`
-	VideoID string `json:"video_id"`
-	AuthorName string `json:"author_name"`
-	SongName string `json:"song_name"`
-	Lyrics string `json:"lyrics"`
-	AuthorID string `json:"author_id"`
-	Privilege int           `json:"privilege"`
-	Privilege2 string       `json:"privilege2"`
-	PlayURL string          `json:"play_url"`
-	Authors []Authors       `json:"authors"`
-	IsFreePart int          `json:"is_free_part"`
-	Bitrate int             `json:"bitrate"`
-	RecommendAlbumID string `json:"recommend_album_id"`
-	AudioID string          `json:"audio_id"`
-	HasPrivilege bool       `json:"has_privilege"`
-	PlayBackupURL string    `json:"play_backup_url"`
-}
 
 func unicode2utf8(source string) string {
 	var res = []string{""}
@@ -177,11 +139,10 @@ func unicode2utf8(source string) string {
 	return strings.Join(res, "")
 }
 
-func getSongDetails(url string) ([]Song,error) {
+func getSongDetails(url string) ([]model.Req,error) {
 	urls := getSongRequestUrls(url)
-	s := make([]Song, 0)
-//	song := NetEaseCloudMusicSong{}
-	var song Song
+	s := make([]model.Req, 0)
+	var song model.Req
 //	var data Data
 //	var song json.RawMessage
 	for i := range urls {
@@ -217,6 +178,11 @@ func getSongDetails(url string) ([]Song,error) {
 
 func HandleSongData(context *gin.Context) {
 	songDetails, err:= getSongDetails("https://wwwapi.kugou.com/yy/index.php?r=play/getdata&callback=jQuery191045751768061608544_1615257951217&dfid=3LjnlA1XAW9s3cB5ld2oVr1V&mid=99467f8a47af4fa16dc26fc68bab9215&platid=4&_=1615257951219")
+	var i = 0
+	for i = 0; i < len(songDetails); i++ {
+		model.Save(songDetails[i].Song.SongName, songDetails[i].Song.AuthorName,songDetails[i].Song.AlbumName, songDetails[i].Song.PlayURL,songDetails[i].Song.Lyrics, songDetails[i].Song.Img,  songDetails[i].Song.Timelength)
+	}
+
 	if err != nil {
 		fmt.Println("获取歌曲详情信息错误getSongDetails()",err)
 	}

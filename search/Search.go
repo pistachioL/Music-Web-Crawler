@@ -11,64 +11,9 @@ import (
 	"github.com/gin-gonic/gin"
 	"io/ioutil"
 	"net/http"
+	"githubLogin/model"
 )
-type SearchReq struct {
-	Status int `json:"status"`
-	Error string `json:"error"`
-	Data SearchData `json:"data"`
-	Errcode int `json:"errcode"`
-}
 
-type SearchData struct {
-	SearchInfo []SearchInfo `json:"info"`
-}
-
-type SearchInfo struct {
-	Singername string `json:"singername"`
-	Songname string `json:"songname"`
-	Hash string `json:"hash"`
-	AlbumAudioID int `json:"album_audio_id"`
-	AlbumID string `json:"album_id"`
-}
-
-type DetailReq struct {
-	Status int `json:"status"`
-	ErrCode int `json:"err_code"`
-	Data Data `json:"data"`
-}
-//type Authors struct {
-//	AuthorID string `json:"author_id"`
-//	AuthorName string `json:"author_name"`
-//	IsPublish string `json:"is_publish"`
-//	SizableAvatar string `json:"sizable_avatar"`
-//	Avatar string `json:"avatar"`
-//}
-type Data struct {
-	Hash string `json:"hash"`
-	Timelength int `json:"timelength"`
-	Filesize int `json:"filesize"`
-	AudioName string `json:"audio_name"`
-	HaveAlbum int `json:"have_album"`
-	AlbumName string `json:"album_name"`
-	AlbumID string `json:"album_id"`
-	Img string `json:"img"`
-	HaveMv int `json:"have_mv"`
-	VideoID string `json:"video_id"`
-	AuthorName string `json:"author_name"`
-	SongName string `json:"song_name"`
-	Lyrics string `json:"lyrics"`
-	AuthorID string `json:"author_id"`
-	Privilege int `json:"privilege"`
-	Privilege2 string `json:"privilege2"`
-	PlayURL string `json:"play_url"`
-	//Authors []Authors `json:"authors"`
-	IsFreePart int `json:"is_free_part"`
-	Bitrate int `json:"bitrate"`
-	RecommendAlbumID string `json:"recommend_album_id"`
-	AudioID string `json:"audio_id"`
-	HasPrivilege bool `json:"has_privilege"`
-	PlayBackupURL string `json:"play_backup_url"`
-}
 
 //酷狗搜索api
 var searchApi = "http://msearchcdn.kugou.com/api/v3/search/song?tagtype=全部&pagesize=50"
@@ -86,7 +31,7 @@ func getKeyword(c *gin.Context) string {
  @desc 请求搜索api中所有歌曲
  @param searchApi 搜索api
 */
-func handleSongDetail(searchApi string, c *gin.Context) SearchReq {
+func handleSongDetail(searchApi string, c *gin.Context) model.SearchReq{
 	client, err := http.NewRequest(http.MethodGet, searchApi, nil)
 	keyword := getKeyword(c)
 	if err != nil {
@@ -103,7 +48,7 @@ func handleSongDetail(searchApi string, c *gin.Context) SearchReq {
 		panic("返回错误响应")
 	}
 	body, _ := ioutil.ReadAll(req.Body)
-	r := SearchReq{}
+	r := model.SearchReq{}
 	json.Unmarshal(body, &r)
 	if r.Status != 1 {
 		panic(r.Error)
@@ -143,9 +88,9 @@ func getSearchResUrls(c *gin.Context) []string{
 }
 
 
-func getSearchDetails(c *gin.Context) []DetailReq{
+func getSearchDetails(c *gin.Context) []model.DetailReq{
 	urls := getSearchResUrls(c)
-	searchSongs := make([]DetailReq, 0)
+	searchSongs := make([]model.DetailReq, 0)
 	for i := range urls {
 		req, err := http.Get(urls[i])
 		if err != nil {
@@ -157,17 +102,20 @@ func getSearchDetails(c *gin.Context) []DetailReq{
 		if req.StatusCode != 200 {
 			panic("返回错误响应")
 		}
-		searchRes := DetailReq{}
+		searchRes := model.DetailReq{}
 		body, _ := ioutil.ReadAll(req.Body) //可用string(body)查看，内容是多个json：{}{}
 		json.Unmarshal(body, &searchRes)
 		searchSongs = append(searchSongs, searchRes) //把每个song存入map中
 	}
 	saveSearchRes(searchSongs)
-	getSearchResult()
+	//如果es中有搜索结果，则返回es数据；否则重新爬取
+	//getSearchResult(getKeyword(c))
 	return searchSongs
 }
 
 func HandleSearch(context *gin.Context) {
+
+
 	res := getSearchDetails(context)
 	context.JSON(http.StatusOK, res) //返回给前端
 }
