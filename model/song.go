@@ -1,6 +1,9 @@
 package model
 
-import "fmt"
+import (
+	"fmt"
+	"github.com/jinzhu/gorm"
+)
 
 //酷狗飙升榜（struct Data 用搜索的结构体）
 type Req struct { //原名是Song
@@ -85,10 +88,21 @@ type Song struct { //原名Data
 
 }
 
+//歌曲信息存储到MySQL
 func Save(songName string, authorName string, albumName string, playUrl string, lyrics string,  img string,  timelength int ) {
 	db := Conn()
 	song := Song{SongName: songName, AuthorName: authorName, AlbumName: albumName,  PlayURL: playUrl,  Lyrics: lyrics, Img: img, Timelength: timelength} // 根据指针找到数据表
 	db.SingularTable(true)
-	res:= db.Create(&song)
-	fmt.Println("歌曲入库结果：", res)
+	db.Create(&song)
+
 }
+
+func Query() *gorm.DB{
+	db := Conn()
+	var song []Song
+	db.SingularTable(true)
+	res := db.Find(&song)
+	fmt.Print("飙升榜查询结果：",res)
+	return res
+}
+

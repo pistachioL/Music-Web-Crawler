@@ -18,6 +18,7 @@ func main() {
 	engine := gin.Default()
 	engine.Use(middlewares.Cors())
 
+
 	engine.Any("/register", login.Register)
 	engine.Any("/login", login.Login)
 	engine.Any("/oauth/redirect", login.Oauth)
