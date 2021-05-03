@@ -177,6 +177,11 @@ func getSongDetails(url string) ([]model.Req,error) {
 }
 
 func HandleSongData(context *gin.Context) {
+	//修改数据表
+	//db := model.Conn()
+	//db.AutoMigrate(&model.Song{}) //生成数据表时手动把歌词类型改为text
+
+	//爬取飙升榜
 	//songDetails, err:= getSongDetails("https://wwwapi.kugou.com/yy/index.php?r=play/getdata&callback=jQuery191045751768061608544_1615257951217&dfid=3LjnlA1XAW9s3cB5ld2oVr1V&mid=99467f8a47af4fa16dc26fc68bab9215&platid=4&_=1615257951219")
 	//var i = 0
 	//for i = 0; i < len(songDetails); i++ {
@@ -185,6 +190,9 @@ func HandleSongData(context *gin.Context) {
 	//if err != nil {
 	//	fmt.Println("获取歌曲详情信息错误getSongDetails()",err)
 	//}
+	//context.JSON(http.StatusOK, songDetails)
+
+	//查询数据表中飙升榜数据
 	dbRes := model.Query()
 	fmt.Println("dbres:", dbRes)
 	context.JSON(http.StatusOK, dbRes.Value) //返回给前端

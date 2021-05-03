@@ -12,7 +12,7 @@ func ReadProfile(c *gin.Context) {
 	db := model.Conn()
 	defer db.Close()
 	var currentUser = c.Query("user")
-	db.Table("user").Where("username = ?", currentUser).Find(&user)
+	db.Table("users").Where("username = ?", currentUser).Find(&user)
 	if user.Username != "" {
 		readResponse["code"] = 0
 		readResponse["msg"] = user

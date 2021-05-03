@@ -22,7 +22,7 @@ func UpdateProfile(c *gin.Context) {
 	gender := c.Request.FormValue("gender")
 	desc := c.Request.FormValue("desc")
 
-	db.Table("user").Where("username = ?", currentUser).Find(&user)
+	db.Table("users").Where("username = ?", currentUser).Find(&user)
 	if user.Username != "" { //有这个用户
 		Response["code"] = ""
 		Response["msg"] = ""
@@ -38,21 +38,21 @@ func UpdateProfile(c *gin.Context) {
 		} else {
 			//修改用户名
 			if name != user.Username {
-				db.Table("user").Where("username = ?", currentUser).Update("username", name)
+				db.Table("users").Where("username = ?", currentUser).Update("username", name)
 				Response["code"] = 0
 				Response["name"] = "用户名修改成功"
 			}
 
 			//修改性别
 			if gender != user.Gender {
-				db.Table("user").Where("username = ?", currentUser).Update("gender", gender)
+				db.Table("users").Where("username = ?", currentUser).Update("gender", gender)
 				Response["code"] = 0
 				Response["gender"] = "性别修改成功"
 			}
 
 			//修改个人简介
 			if desc != user.Desc {
-				db.Table("user").Where("username = ?", currentUser).Update("desc", desc)
+				db.Table("users").Where("username = ?", currentUser).Update("desc", desc)
 				Response["code"] = 0
 				Response["desc"] = "个人简介修改成功"
 			}

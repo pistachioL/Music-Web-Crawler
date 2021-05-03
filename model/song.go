@@ -10,7 +10,7 @@ type Req struct { //原名是Song
 	Status int `json:"status"`
 	ErrCode int `json:"err_code"`
 	Song Song `json:"data"`
-	Like bool `json:"like"`
+
 }
 type Authors struct {
 	AuthorID      string `json:"author_id"`
@@ -55,25 +55,24 @@ type DetailReq struct {
 //}
 type Song struct { //原名Data
 	Id 		 	int 	`db:"id"`
-	SongName string 	`json:"song_name"`
-	AuthorName string 	`json:"author_name" `
-	AlbumName string 	`json:"album_name"`
-	PlayURL string 		`json:"play_url"`
-	Lyrics string 		`json:"lyrics"`
-	Img string 			`json:"img"`
-	Timelength int 		`json:"timelength"`
-	//Hash string `json:"hash"`
+	SongName 	string 	`json:"song_name"`
+	AuthorName 	string 	`json:"author_name" `
+	AlbumName 	string 	`json:"album_name"`
+	PlayURL 	string 	`json:"play_url"`
+	Lyrics	 	string 	`json:"lyrics" gorm:"type:varchar(255);not null" json:"lyrics"`
+	Img 		string 	`json:"img"`
+	Timelength 	int 	`json:"timelength"`
+	Like        bool    `json:"like"` //是否收藏该歌曲
+	//gorm.Model
+	User []*User `gorm:"many2many:user_song;"`
 
+	//Hash string `json:"hash"`
 	//Filesize int `json:"filesize"`
 	//AudioName string `json:"audio_name"`
 	//HaveAlbum int `json:"have_album"`
-
 	//AlbumID string `json:"album_id"`
-
 	//HaveMv int `json:"have_mv"`
 	//VideoID string `json:"video_id"`
-
-
 	//AuthorID string `json:"author_id"`
 	//Privilege int `json:"privilege"`
 	//Privilege2 string `json:"privilege2"`
@@ -85,14 +84,13 @@ type Song struct { //原名Data
 	//AudioID string `json:"audio_id"`
 	//HasPrivilege bool `json:"has_privilege"`
 	//PlayBackupURL string `json:"play_backup_url"`
-
 }
 
 //歌曲信息存储到MySQL
 func Save(songName string, authorName string, albumName string, playUrl string, lyrics string,  img string,  timelength int ) {
 	db := Conn()
 	song := Song{SongName: songName, AuthorName: authorName, AlbumName: albumName,  PlayURL: playUrl,  Lyrics: lyrics, Img: img, Timelength: timelength} // 根据指针找到数据表
-	db.SingularTable(true)
+	//db.SingularTable(true)
 	db.Create(&song)
 
 }
@@ -100,7 +98,7 @@ func Save(songName string, authorName string, albumName string, playUrl string, 
 func Query() *gorm.DB{
 	db := Conn()
 	var song []Song
-	db.SingularTable(true)
+	//db.SingularTable(true)
 	res := db.Find(&song)
 	fmt.Print("飙升榜查询结果：",res)
 	return res

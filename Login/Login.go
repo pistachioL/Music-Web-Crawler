@@ -25,8 +25,9 @@ func Register(c *gin.Context) {
 		return
 	}
 	db := model.Conn()
+	db.AutoMigrate(&model.User{})
 	var user model.User
-	db.Table("user").Select("email").Where("email = ?", email).Scan(&user)
+	db.Table("users").Select("email").Where("email = ?", email).Scan(&user)
 
 	if user.Email != "" {
 		Response["code"] = 1
@@ -50,7 +51,7 @@ func Login(c *gin.Context) {
 	}
 	db := model.Conn()
 	var user model.User
-	db.Table("user").Where("username = ?", name).Find(&user)
+	db.Table("users").Where("username = ?", name).Find(&user)
 	if user.Email != "" {
 		if user.Password == pwd {
 			Response["code"] = 0
@@ -70,7 +71,7 @@ func Login(c *gin.Context) {
 func AddUser(name string, pwd string, email string) {
 	db := model.Conn()
 	newUser := &model.User{Username: name, Password: pwd, Email: email} // 根据指针找到数据表
-	db.SingularTable(true)
+	//db.SingularTable(true)
 	db.Create(newUser)
 }
 

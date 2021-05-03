@@ -2,12 +2,14 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
+	"githubLogin/collect"
 	"githubLogin/crawler"
 	"githubLogin/login"
 	"githubLogin/middlewares"
 	"githubLogin/redis"
 	"githubLogin/search"
 	"githubLogin/userhome"
+
 )
 
 func start() {
@@ -30,6 +32,8 @@ func main() {
 	engine.Any("/getRecentlyPlay", redis.GetRecentPlay)
 	engine.Any("/search", search.HandleSearch)
 
-	//engine.Any("/collect", collect.CollectSong)
+	engine.Any("/addCollection", collect.AddCollection)
+	engine.Any("/queryCollection", collect.QueryCollection)
+
 	_ = engine.Run(":9091")
 }

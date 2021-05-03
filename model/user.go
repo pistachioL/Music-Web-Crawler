@@ -1,5 +1,4 @@
 package model
-
 type User struct {
 	Id		 int        `json:"id" `
 	Username string	    `json:"username" db:"username"`
@@ -8,6 +7,8 @@ type User struct {
 	Gender   string		`json:"gender"`
 	Avatar 	 string		`json:"avatar"`
 	Desc 	 string		`json:"desc"`
+	//gorm.Model
+	Song 	 []Song 	`gorm:"many2many:user_song;"`
 }
 
 

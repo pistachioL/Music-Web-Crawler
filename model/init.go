@@ -14,5 +14,8 @@ func Conn() *gorm.DB{
 		fmt.Print("connect databases fail", err)
 	}
 	fmt.Print("connect database success")
+
 	return db
 }
+
+
