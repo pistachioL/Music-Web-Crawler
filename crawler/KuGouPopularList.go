@@ -8,6 +8,7 @@ import (
 	_ "github.com/go-redis/redis/v8"
 	"github.com/jaydenwen123/go-util"
 	"github.com/tidwall/gjson"
+	"githubLogin/model"
 	"io/ioutil"
 	"net"
 	"net/http"
@@ -15,7 +16,6 @@ import (
 	"strconv"
 	"strings"
 	"time"
-	"githubLogin/model"
 )
 
 
@@ -182,17 +182,23 @@ func HandleSongData(context *gin.Context) {
 	//db.AutoMigrate(&model.Song{}) //生成数据表时手动把歌词类型改为text
 
 	//爬取飙升榜
-	//songDetails, err:= getSongDetails("https://wwwapi.kugou.com/yy/index.php?r=play/getdata&callback=jQuery191045751768061608544_1615257951217&dfid=3LjnlA1XAW9s3cB5ld2oVr1V&mid=99467f8a47af4fa16dc26fc68bab9215&platid=4&_=1615257951219")
+	songDetails, err:= getSongDetails("https://wwwapi.kugou.com/yy/index.php?r=play/getdata&callback=jQuery191045751768061608544_1615257951217&dfid=3LjnlA1XAW9s3cB5ld2oVr1V&mid=99467f8a47af4fa16dc26fc68bab9215&platid=4&_=1615257951219")
 	//var i = 0
 	//for i = 0; i < len(songDetails); i++ {
 	//	model.Save(songDetails[i].Song.SongName, songDetails[i].Song.AuthorName,songDetails[i].Song.AlbumName, songDetails[i].Song.PlayURL,songDetails[i].Song.Lyrics, songDetails[i].Song.Img,  songDetails[i].Song.Timelength)
 	//}
-	//if err != nil {
-	//	fmt.Println("获取歌曲详情信息错误getSongDetails()",err)
-	//}
-	//context.JSON(http.StatusOK, songDetails)
+	if err != nil {
+		fmt.Println("获取歌曲详情信息错误getSongDetails()",err)
+	}
+	context.JSON(http.StatusOK, songDetails)
 
+
+}
+
+func HandleDBdata(context *gin.Context) {
 	//查询数据表中飙升榜数据
+	//db := model.Conn()
+	//db.AutoMigrate(&model.Song{}) //生成数据表时手动把歌词类型改为text
 	dbRes := model.Query()
 	fmt.Println("dbres:", dbRes)
 	context.JSON(http.StatusOK, dbRes.Value) //返回给前端

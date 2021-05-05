@@ -3,6 +3,7 @@ module githubLogin
 go 1.15
 
 require (
+	github.com/PuerkitoBio/goquery v1.6.1
 	github.com/astaxie/beego v1.12.3
 	github.com/bitly/go-simplejson v0.5.0 // indirect
 	github.com/gin-gonic/gin v1.6.3
@@ -27,5 +28,7 @@ require (
 	gopkg.in/ini.v1 v1.62.0 // indirect
 	gopkg.in/olivere/elastic.v5 v5.0.86
 	gopkg.in/yaml.v2 v2.4.0 // indirect
-	gorm.io/gorm v1.21.8
+	gorm.io/driver/mysql v1.0.6
+	gorm.io/driver/sqlite v1.1.4 // indirect
+	gorm.io/gorm v1.21.9
 )

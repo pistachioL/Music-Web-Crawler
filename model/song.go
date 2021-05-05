@@ -59,7 +59,7 @@ type Song struct { //原名Data
 	AuthorName 	string 	`json:"author_name" `
 	AlbumName 	string 	`json:"album_name"`
 	PlayURL 	string 	`json:"play_url"`
-	Lyrics	 	string 	`json:"lyrics" gorm:"type:varchar(255);not null" json:"lyrics"`
+	Lyrics	 	string 	`json:"lyrics" gorm:"type:varchar(255);not null" json:""`
 	Img 		string 	`json:"img"`
 	Timelength 	int 	`json:"timelength"`
 	Like        bool    `json:"like"` //是否收藏该歌曲
@@ -95,10 +95,11 @@ func Save(songName string, authorName string, albumName string, playUrl string, 
 
 }
 
-func Query() *gorm.DB{
+
+//请求酷狗飙升榜的数据
+func Query() *gorm.DB {
 	db := Conn()
 	var song []Song
-	//db.SingularTable(true)
 	res := db.Find(&song)
 	fmt.Print("飙升榜查询结果：",res)
 	return res

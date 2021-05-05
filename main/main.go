@@ -9,7 +9,6 @@ import (
 	"githubLogin/redis"
 	"githubLogin/search"
 	"githubLogin/userhome"
-
 )
 
 func start() {
@@ -19,8 +18,8 @@ func start() {
 func main() {
 	engine := gin.Default()
 	engine.Use(middlewares.Cors())
-
-
+	//search.SaveSearchKey()
+	//crawler.GetSongDetail()
 	engine.Any("/register", login.Register)
 	engine.Any("/login", login.Login)
 	engine.Any("/oauth/redirect", login.Oauth)
@@ -28,12 +27,17 @@ func main() {
 	engine.Any("/readProfile", userhome.ReadProfile)
 
 	engine.Any("/popularList", crawler.HandleSongData)
+	engine.Any("/popularList1", crawler.HandleDBdata)
+	engine.Any("/kuwoPopularList", crawler.KuwoSongList)
+
 	engine.Any("/setRecentlyPlay", redis.SetRecentPlay)
 	engine.Any("/getRecentlyPlay", redis.GetRecentPlay)
 	engine.Any("/search", search.HandleSearch)
 
 	engine.Any("/addCollection", collect.AddCollection)
 	engine.Any("/queryCollection", collect.QueryCollection)
+	engine.Any("/queryFiveCollection", collect.QueryFiveCollection)
+	engine.Any("/cancelCollection", collect.CancelCollection)
 
 	_ = engine.Run(":9091")
 }
