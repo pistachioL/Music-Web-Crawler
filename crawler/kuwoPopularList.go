@@ -99,8 +99,8 @@ func KuwoSongList(context *gin.Context) {
 	}
 	res := string(r)
 	var kuwo Req
-	if err := json.Unmarshal([]byte(res), &kuwo); err == nil {
-		fmt.Println(kuwo)
+	if err := json.Unmarshal([]byte(res), &kuwo); err != nil {
+		fmt.Println("json反序列化错误", err)
 	}
 	context.JSON(http.StatusOK, kuwo) //返回给前端
 }

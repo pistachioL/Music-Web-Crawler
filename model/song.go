@@ -10,7 +10,7 @@ type Req struct { //原名是Song
 	Status int `json:"status"`
 	ErrCode int `json:"err_code"`
 	Song Song `json:"data"`
-
+	Like bool `json:"like"`  //要在这里定义like，否则前端表格无法获取！
 }
 type Authors struct {
 	AuthorID      string `json:"author_id"`

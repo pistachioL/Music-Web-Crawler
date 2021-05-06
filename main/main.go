@@ -27,8 +27,10 @@ func main() {
 	engine.Any("/readProfile", userhome.ReadProfile)
 
 	engine.Any("/popularList", crawler.HandleSongData)
-	engine.Any("/popularList1", crawler.HandleDBdata)
+	engine.Any("/popularListDB", crawler.HandleDBdata)
 	engine.Any("/kuwoPopularList", crawler.KuwoSongList)
+	engine.Any("/qqPopularList", crawler.QQSongList)
+
 
 	engine.Any("/setRecentlyPlay", redis.SetRecentPlay)
 	engine.Any("/getRecentlyPlay", redis.GetRecentPlay)

@@ -72,8 +72,9 @@ func setExpire(key string) bool{
 	res, err := client.Expire(key, 720*time.Hour).Result()
 	if err != nil {
 		fmt.Println("过期时间设置错误：",err)
+		return false
 	}
-	fmt.Print("设置为期一个月的过期时间：",res)
+	fmt.Print("设置为期一个月的过期时间成功：")
 	return res
 }
 

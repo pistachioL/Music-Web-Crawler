@@ -107,7 +107,7 @@ func getSearchDetails(c *gin.Context) []model.DetailReq{
 		json.Unmarshal(body, &searchRes)
 		searchSongs = append(searchSongs, searchRes) //把每个song存入map中
 	}
-	saveSearchRes(searchSongs)
+	//saveSearchRes(searchSongs)
 	//如果es中有搜索结果，则返回es数据；否则重新爬取
 	//getSearchResult(getKeyword(c))
 	return searchSongs

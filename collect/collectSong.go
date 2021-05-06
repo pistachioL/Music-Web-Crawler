@@ -62,11 +62,11 @@ func CancelCollection(c *gin.Context) {
 	var user model.User
 	var songId = c.Query("songId")
 	var song []model.Song
-	db.Model(model.Song{}).Where("id = ?" , songId).Find(&song)
-	userId := db.Select("id").Where("username = ?", currentUser).Find(&user)
-	db.Table("users").Where("id = ?", userId).First(&user) //查找取消收藏的歌曲
-	res := db.Model(&user).Association("Song").Delete(&song) //建立歌曲和用户的关联
 
+	userId := db.Select("id").Where("username = ?", currentUser).Find(&user)
+	db.Table("users").Where("id = ?", userId).First(&user) //查找点击取消收藏的用户
+	db.Model(model.Song{}).Where("id = ?" , songId).Find(&song)
+	res := db.Model(&user).Association("Song").Delete(song) //建立歌曲和用户的关联
 	fmt.Println("取消收藏：", res)
 	c.JSON(http.StatusOK, res) //返回给前端
 }
