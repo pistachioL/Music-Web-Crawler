@@ -1,17 +1,76 @@
 package crawler
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"io/ioutil"
 	"log"
 	"net/http"
 )
+type Req struct {
+	Code int `json:"code"`
+	CurTime int64 `json:"curTime"`
+	Data Data `json:"data"`
+	Msg string `json:"msg"`
+	ProfileID string `json:"profileId"`
+	ReqID string `json:"reqId"`
+	TID string `json:"tId"`
+}
+type Mvpayinfo struct {
+	Play int `json:"play"`
+	Vid int `json:"vid"`
+	Down int `json:"down"`
+}
+type FeeType struct {
+	Song string `json:"song"`
+	Vip string `json:"vip"`
+}
+type PayInfo struct {
+	Play string `json:"play"`
+	Download string `json:"download"`
+	LocalEncrypt string `json:"local_encrypt"`
+	Limitfree int `json:"limitfree"`
+	CannotDownload int `json:"cannotDownload"`
+	ListenFragment string `json:"listen_fragment"`
+	CannotOnlinePlay int `json:"cannotOnlinePlay"`
+	FeeType FeeType `json:"feeType"`
+	Down string `json:"down"`
+}
+type Data struct {
+	Img string `json:"img"`
+	Num string `json:"num"`
+	Pub string `json:"pub"`
+	MusicList []MusicList `json:"musicList"`
+}
 
-type Kuwo struct {
-	Img string`json:"img"`
-	SongName 	string 	`json:"song_name"`
-	
+type MusicList struct {
+	Musicrid string `json:"musicrid"`
+	Barrage string `json:"barrage"`
+	Artist string `json:"artist"`
+	Trend string `json:"trend"`
+	Pic string `json:"pic"`
+	Isstar int `json:"isstar"`
+	Rid int `json:"rid"`
+	Duration int `json:"duration"`
+	Score100 string `json:"score100"`
+	ContentType string `json:"content_type"`
+	RankChange string `json:"rank_change"`
+	Track int `json:"track"`
+	HasLossless bool `json:"hasLossless"`
+	Hasmv int `json:"hasmv"`
+	ReleaseDate string `json:"releaseDate"`
+	Album string `json:"album"`
+	Albumid int `json:"albumid"`
+	Pay string `json:"pay"`
+	Artistid int `json:"artistid"`
+	Albumpic string `json:"albumpic"`
+	Originalsongtype int `json:"originalsongtype"`
+	SongTimeMinutes string `json:"songTimeMinutes"`
+	IsListenFee bool `json:"isListenFee"`
+	Pic120 string `json:"pic120"`
+	Name string `json:"name"`
+	Online int `json:"online"`
 }
 
 func KuwoSongList(context *gin.Context) {
@@ -38,6 +97,10 @@ func KuwoSongList(context *gin.Context) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println(string(r))
-	context.JSON(http.StatusOK, string(r)) //返回给前端
+	res := string(r)
+	var kuwo Req
+	if err := json.Unmarshal([]byte(res), &kuwo); err == nil {
+		fmt.Println(kuwo)
+	}
+	context.JSON(http.StatusOK, kuwo) //返回给前端
 }
