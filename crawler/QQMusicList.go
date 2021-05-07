@@ -128,8 +128,4 @@ func QQSongList(context *gin.Context) {
 	context.JSON(http.StatusOK, qqMusic) //返回给前端
 }
 
-//func saveRedis() {
-//	redis := redis.Conn()
-//
-//}
 
