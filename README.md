@@ -4,7 +4,7 @@ Gin框架的学习与实践
 
 ### 项目启动
 ```
-cd /src/main
+cd /main
 go run main.go
 ```
 ### 主要功能：
