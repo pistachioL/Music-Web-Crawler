@@ -12,4 +12,7 @@ go run main.go
 - Redis存储最近播放的歌曲
 - 调用网易云、qq音乐、酷狗音乐开源接口获取歌曲信息
 
+todo:
+多个goroutine并发请求接口
+
 
